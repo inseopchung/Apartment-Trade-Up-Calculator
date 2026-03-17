@@ -118,3 +118,120 @@ MIT License
 ## 🙏 데이터 출처
 
 - [공공데이터포털](https://www.data.go.kr) — 국토교통부 아파트매매 실거래 상세 자료
+
+---
+
+# 🏠 Apartment Trade-Up Calculator
+
+A web application that calculates the price gap between your **current apartment** and a **target apartment** using accurate transaction data from the Korean Ministry of Land, Infrastructure and Transport (data.go.kr).
+
+> This project was built using **[Google Antigravity](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/)**.
+
+---
+
+## ✨ Key Features
+
+- **Real Transaction Data** — Integrated with the official MOLIT Apartment Trade API.
+- **Region & Apartment Search** — Select via City/District dropdowns or search directly by apartment name.
+- **Automatic Period Filter** — Automatically queries the last 6 months of data when searching only by name.
+- **Bilingual Support (i18n)** — Toggle between English (EN) and Korean (KR) UI seamlessly.
+- **Area (Pyeong) Filter** — Filters by net area (㎡) converted into traditional Pyeong sizing.
+- **Complex Stats** — Displays transaction count and apartment type variations per complex.
+- **Trade-Up Gap Calculation** — Easily view the price difference between two selected apartments.
+- **Detailed Comparison Table** — Compare area, floor, built year, deal date, and prices side-by-side.
+- **Price Trend Chart** — 6-month historical average transaction price comparison chart.
+- **Neighborhood Comparison** — View the price-per-pyeong ranking of neighboring complexes for both apartments.
+- **Kakao Map Integration** — Displays the precise location of the selected apartments on a map (Optional).
+
+## 📸 Screenshot
+
+<p align="center">
+  <em>Select a region, period, and click search to view real transaction data.</em>
+</p>
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Project
+
+```bash
+git clone https://github.com/YOUR_USERNAME/apartment-gap-calculator.git
+cd apartment-gap-calculator
+```
+
+### 2. Get your Free API Key
+
+This app leverages the official [data.go.kr](https://www.data.go.kr) API. You can get a key for free.
+
+1. Sign up and log in to [data.go.kr](https://www.data.go.kr).
+2. Go to the [국토교통부_아파트매매 실거래 상세 자료 (MOLIT Apartment Trade Data)](https://www.data.go.kr/data/15057511/openapi.do) page.
+3. Click **활용 신청 (Apply for Use)** (Instant approval).
+4. Go to **마이페이지 (My Page) → 오픈API (Open API)** and copy your **Decoding Key**.
+
+> ⚠️ Newly issued keys may take up to **1 hour** to become active.
+
+### 3. Environment Variables
+
+```bash
+cp .env.example .env
+```
+
+Open the `.env` file and insert your keys as follows:
+
+```
+# [Required] data.go.kr Decoding Key
+API_KEY=your_decoding_key_here
+
+# [Optional] Kakao Map JavaScript API Key (required to display the map)
+KAKAO_KEY=your_kakao_javascript_key_here
+```
+
+### 4. Run the Server
+
+```bash
+node server.js
+```
+
+Open your browser and navigate to **http://localhost:3456**.
+
+---
+
+## 🛠️ Tech Stack
+
+| Type | Technology |
+|------|------------|
+| **Frontend** | HTML, CSS (Vanilla), JavaScript |
+| **Backend** | Node.js (Built-in modules only, zero dependencies) |
+| **API** | data.go.kr — MOLIT Apartment Trade Data |
+| **Design System**| Dark Mode, Glassmorphism, Inter Font |
+
+## 📁 Project Structure
+
+```
+├── server.js        # Node.js server (Static files + API Proxy)
+├── index.html       # Main App UI
+├── main.js          # Client Logic (Search, Filter, Gap Calc, etc.)
+├── style.css        # Design System & Styling
+├── .env             # API Keys (Git ignored)
+├── .env.example     # Example .env file
+├── .gitignore
+└── package.json
+```
+
+## 📡 API Architecture
+
+The local server (`server.js`) acts as a proxy for the data.go.kr API to avoid CORS issues:
+
+```
+Browser  →  localhost:3456/api/apt-trade  →  apis.data.go.kr
+                    (XML → JSON Conversion)
+```
+
+## 📄 License
+
+MIT License
+
+## 🙏 Data Source
+
+- [data.go.kr](https://www.data.go.kr) — Ministry of Land, Infrastructure and Transport (MOLIT) Real Estate Transaction API
