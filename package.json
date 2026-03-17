@@ -1,0 +1,10 @@
+{
+  "name": "apartment-gap-calculator",
+  "version": "1.0.0",
+  "description": "Compare apartment prices in South Korea using data.go.kr public data",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}

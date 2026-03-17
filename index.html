@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아파트 갈아타기 계산기 | 공공데이터 실거래가</title>
+    <meta name="description" content="공공데이터포털 실거래가 API를 이용하여 아파트 매매 가격을 비교합니다." />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+    <div class="bg-effects">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-top">
+                <div class="logo-icon">🏠</div>
+                <div class="header-actions">
+                    <button class="lang-toggle" id="langToggle" title="Language">
+                        <span id="langLabel">EN</span>
+                    </button>
+                    <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                        <span class="theme-icon" id="themeIcon">🌙</span>
+                    </button>
+                </div>
+            </div>
+            <h1 data-i18n="title">아파트 갈아타기 계산기</h1>
+            <p data-i18n="subtitle">공공데이터 실거래가로 내 아파트와 목표 아파트의 가격 차이를 확인하세요</p>
+        </header>
+
+        <!-- Search Panels -->
+        <section class="search-section" id="searchSection">
+
+            <!-- My Apartment -->
+            <div class="search-panel mine" id="panelMine">
+                <div class="panel-label"><span data-i18n="mine_icon">🏡</span> <span data-i18n="mine_title">내 아파트</span>
+                </div>
+                <div class="region-selectors">
+                    <div class="select-group">
+                        <label data-i18n="sido">시/도</label>
+                        <select id="sidoMine" class="region-select">
+                            <option value="" data-i18n="sido_ph">시/도 선택</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label data-i18n="gugun">구/군</label>
+                        <select id="gugunMine" class="region-select" disabled>
+                            <option value="" data-i18n="gugun_ph">구/군 선택</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label data-i18n="year">거래 년도</label>
+                        <select id="yearMine" class="region-select">
+                            <option value="" data-i18n="year_ph">년도</option>
+                        </select>
+                    </div>
+                    <div class="select-group" style="min-width:70px">
+                        <label data-i18n="month">거래 월</label>
+                        <select id="monthMine" class="region-select">
+                            <option value="" data-i18n="month_ph">전체</option>
+                        </select>
+                    </div>
+                    <div class="select-group" style="flex:2">
+                        <label data-i18n="apt_name">아파트명 (선택)</label>
+                        <input type="text" id="aptNameMine" class="region-select" placeholder="이름만 입력 시 최근 6개월 조회" />
+                    </div>
+                    <button id="searchBtnMine" class="btn-search"><span data-i18n="search">🔍 조회</span></button>
+                </div>
+                <div class="status-message" id="statusMine"></div>
+                <div class="transaction-list" id="txListMine"></div>
+                <div class="apartment-info" id="infoMine">
+                    <div class="apt-name-row">
+                        <span class="apt-name" id="aptNameMine"></span>
+                        <span class="apt-badge" id="aptBadgeMine"></span>
+                    </div>
+                    <div class="apt-meta" id="aptMetaMine"></div>
+                    <div class="apt-prices">
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_sell">실거래가</div>
+                            <div class="price-value" id="priceSellMine">—</div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_pp">평당가</div>
+                            <div class="price-value" id="pricePpMine">—</div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_area">전용면적 / 층</div>
+                            <div class="price-value sm" id="priceDetailMine">—</div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_ratio">전세가율</div>
+                            <div class="price-value" id="jeonseRatioMine">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Apartment -->
+            <div class="search-panel target" id="panelTarget">
+                <div class="panel-label"><span data-i18n="target_icon">🎯</span> <span data-i18n="target_title">목표
+                        아파트</span></div>
+                <div class="region-selectors">
+                    <div class="select-group">
+                        <label data-i18n="sido">시/도</label>
+                        <select id="sidoTarget" class="region-select">
+                            <option value="" data-i18n="sido_ph">시/도 선택</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label data-i18n="gugun">구/군</label>
+                        <select id="gugunTarget" class="region-select" disabled>
+                            <option value="" data-i18n="gugun_ph">구/군 선택</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label data-i18n="year">거래 년도</label>
+                        <select id="yearTarget" class="region-select">
+                            <option value="" data-i18n="year_ph">년도</option>
+                        </select>
+                    </div>
+                    <div class="select-group" style="min-width:70px">
+                        <label data-i18n="month">거래 월</label>
+                        <select id="monthTarget" class="region-select">
+                            <option value="" data-i18n="month_ph">전체</option>
+                        </select>
+                    </div>
+                    <div class="select-group" style="flex:2">
+                        <label data-i18n="apt_name">아파트명 (선택)</label>
+                        <input type="text" id="aptNameTarget" class="region-select" placeholder="이름만 입력 시 최근 6개월 조회" />
+                    </div>
+                    <button id="searchBtnTarget" class="btn-search"><span data-i18n="search">🔍 조회</span></button>
+                </div>
+                <div class="status-message" id="statusTarget"></div>
+                <div class="transaction-list" id="txListTarget"></div>
+                <div class="apartment-info" id="infoTarget">
+                    <div class="apt-name-row">
+                        <span class="apt-name" id="aptNameTarget"></span>
+                        <span class="apt-badge" id="aptBadgeTarget"></span>
+                    </div>
+                    <div class="apt-meta" id="aptMetaTarget"></div>
+                    <div class="apt-prices">
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_sell">실거래가</div>
+                            <div class="price-value" id="priceSellTarget">—</div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_pp">평당가</div>
+                            <div class="price-value" id="pricePpTarget">—</div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_area">전용면적 / 층</div>
+                            <div class="price-value sm" id="priceDetailTarget">—</div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label" data-i18n="price_ratio">전세가율</div>
+                            <div class="price-value" id="jeonseRatioTarget">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compare Button -->
+        <button class="compare-btn" id="compareBtn" data-i18n="compare_btn">💰 갈아타기 비교하기</button>
+
+        <!-- Gap Result -->
+        <section class="gap-section" id="gapSection">
+            <div class="gap-card">
+                <div class="gap-title" data-i18n="gap_title">추가 필요 금액</div>
+                <div class="gap-amount" id="gapAmount">—</div>
+                <div class="gap-subtitle" id="gapSubtitle"></div>
+                <div class="gap-details">
+                    <div class="detail-item">
+                        <div class="detail-label" data-i18n="mine_sell_price">내 아파트 실거래가</div>
+                        <div class="detail-value mine-color" id="detailMineSell">—</div>
+                        <div class="detail-apt-name" id="detailMineName"></div>
+                    </div>
+                    <div class="arrow-section">→</div>
+                    <div class="detail-item">
+                        <div class="detail-label" data-i18n="target_sell_price">목표 아파트 실거래가</div>
+                        <div class="detail-value target-color" id="detailTargetSell">—</div>
+                        <div class="detail-apt-name" id="detailTargetName"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Breakdown -->
+        <section class="breakdown-section" id="breakdownSection">
+            <div class="breakdown-card">
+                <h3 data-i18n="detail_compare">📊 상세 비교</h3>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="item">항목</th>
+                            <th data-i18n="mine_title">내 아파트</th>
+                            <th data-i18n="target_title">목표 아파트</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdownBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Price Trend Chart -->
+        <section class="chart-section" id="chartSection">
+            <div class="chart-card">
+                <h3 data-i18n="trend_title">📈 시세 추이 (최근 6개월)</h3>
+                <p class="chart-desc" id="chartDesc"></p>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Neighborhood Comparison -->
+        <section class="neighborhood-section" id="neighborhoodSection">
+            <div class="neighborhood-grid-wrapper">
+                <div class="neighborhood-card" id="neighborhoodMine" style="display:none">
+                    <h3 data-i18n="nb_mine">🏘️ 내 아파트 주변 시세</h3>
+                    <div class="neighborhood-grid" id="neighborhoodGridMine"></div>
+                </div>
+                <div class="neighborhood-card" id="neighborhoodTarget" style="display:none">
+                    <h3 data-i18n="nb_target">🏘️ 목표 아파트 주변 시세</h3>
+                    <div class="neighborhood-grid" id="neighborhoodGridTarget"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map -->
+        <section class="map-section" id="mapSection">
+            <div class="map-card">
+                <h3 data-i18n="map_title">🗺️ 위치</h3>
+                <div class="map-container" id="mapContainer">
+                    <div class="map-placeholder" id="mapPlaceholder" data-i18n="map_ph">아파트를 선택하면 지도가 표시됩니다</div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <p>데이터 출처: <a href="https://www.data.go.kr" target="_blank">공공데이터포털</a> — 국토교통부 아파트매매 실거래 상세 자료</p>
+            <p>© 2026 아파트 갈아타기 계산기 · Built with <a href="https://blog.google/technology/google-deepmind/"
+                    target="_blank">Google Antigravity</a></p>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
