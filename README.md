@@ -35,8 +35,8 @@
 ### 1. 프로젝트 클론
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/apartment-gap-calculator.git
-cd apartment-gap-calculator
+git clone https://github.com/inseopchung/Apartment-Trade-Up-Calculator.git
+cd Apartment-Trade-Up-Calculator
 ```
 
 ### 2. API 키 발급 (무료)
@@ -164,8 +164,8 @@ A web application that calculates the price gap between your **current apartment
 ### 1. Clone the Project
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/apartment-gap-calculator.git
-cd apartment-gap-calculator
+git clone https://github.com/inseopchung/Apartment-Trade-Up-Calculator.git
+cd Apartment-Trade-Up-Calculator
 ```
 
 ### 2. Get your Free API Key
