@@ -1,5 +1,7 @@
 # 🏠 아파트 갈아타기 계산기
 
+![App Screenshot](./img.png)
+
 공공데이터포털(data.go.kr) 실거래가 API를 이용하여 **내 아파트**와 **목표 아파트**의 매매 가격 차이를 계산하는 웹 앱입니다.
 
 > 이 프로젝트는 **[Google Antigravity](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/)** 를 통해 만들어졌습니다.
@@ -126,6 +128,8 @@ MIT License
 ---
 
 # 🏠 Apartment Trade-Up Calculator
+
+![App Screenshot](./img.png)
 
 A web application that calculates the price gap between your **current apartment** and a **target apartment** using accurate transaction data from the Korean Ministry of Land, Infrastructure and Transport (data.go.kr).
 
