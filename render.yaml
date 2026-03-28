@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: apartment-gap-calculator
+    runtime: node
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: API_KEY
+        sync: false
+      - key: KAKAO_KEY
+        sync: false

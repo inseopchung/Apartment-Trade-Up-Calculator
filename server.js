@@ -9,16 +9,18 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
-const PORT = 3456;
+const PORT = process.env.PORT || 3456;
 
-// ─── Load .env ───────────────────────────────────────────
-let API_KEY = '', KAKAO_KEY = '';
+// ─── Load Environment Variables ──────────────────────────
+let API_KEY = process.env.API_KEY || '';
+let KAKAO_KEY = process.env.KAKAO_KEY || '';
+
 try {
     const env = fs.readFileSync(path.join(__dirname, '.env'), 'utf8');
     const m1 = env.match(/^API_KEY=(.+)$/m);
-    if (m1) API_KEY = m1[1].trim();
+    if (m1 && !process.env.API_KEY) API_KEY = m1[1].trim();
     const m2 = env.match(/^KAKAO_KEY=(.+)$/m);
-    if (m2) KAKAO_KEY = m2[1].trim();
+    if (m2 && !process.env.KAKAO_KEY) KAKAO_KEY = m2[1].trim();
 } catch (e) { }
 
 const MIME = {
