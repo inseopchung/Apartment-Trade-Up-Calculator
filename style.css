@@ -197,6 +197,28 @@ body {
   gap: var(--space-xs);
 }
 
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-glass);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.github-link:hover {
+  background: var(--bg-input-focus);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
 .lang-toggle {
   background: var(--bg-input);
   border: 1px solid var(--border-glass);
