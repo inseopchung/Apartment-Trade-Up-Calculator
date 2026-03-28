@@ -239,13 +239,13 @@ function processTransactions(items) {
 }
 
 function getComplexStats(txList) {
-  var s = {}; txList.forEach(function (t) { if (!s[t.name]) s[t.name] = { count: 0, areas: new Set() }; s[t.name].count++; s[t.name].areas.add(t.area); }); return s;
+  var s = {}; txList.forEach(function (tx) { if (!s[tx.name]) s[tx.name] = { count: 0, areas: new Set() }; s[tx.name].count++; s[tx.name].areas.add(tx.area); }); return s;
 }
-function getUniqueBuckets(txList) { var b = new Set(); txList.forEach(function (t) { b.add(t.bucket); }); return Array.from(b).sort(function (x, y) { return x - y; }); }
-function getUniqueComplexes(txList) { var n = new Set(); txList.forEach(function (t) { n.add(t.name); }); return Array.from(n).sort(); }
+function getUniqueBuckets(txList) { var b = new Set(); txList.forEach(function (tx) { b.add(tx.bucket); }); return Array.from(b).sort(function (x, y) { return x - y; }); }
+function getUniqueComplexes(txList) { var n = new Set(); txList.forEach(function (tx) { n.add(tx.name); }); return Array.from(n).sort(); }
 function filterAndGroup(txList, nameF, bucketF) {
-  var f = txList.filter(function (t) { if (nameF && t.name !== nameF) return false; if (bucketF !== -1 && t.bucket !== bucketF) return false; return true; });
-  var m = new Map(); f.forEach(function (t) { var k = t.name + '_' + t.area; if (!m.has(k) || t.price > m.get(k).price) m.set(k, t); });
+  var f = txList.filter(function (tx) { if (nameF && tx.name !== nameF) return false; if (bucketF !== -1 && tx.bucket !== bucketF) return false; return true; });
+  var m = new Map(); f.forEach(function (tx) { var k = tx.name + '_' + tx.area; if (!m.has(k) || tx.price > m.get(k).price) m.set(k, tx); });
   return Array.from(m.values()).sort(function (a, b) { return b.price - a.price; });
 }
 
@@ -343,11 +343,11 @@ function renderNeighborhood(side) {
   var tx = state[side].tx;
   // Group by apartment, calculate avg price per pyeong
   var complexMap = {};
-  allTx.forEach(function (t) {
-    if (!complexMap[t.name]) complexMap[t.name] = { total: 0, count: 0, totalArea: 0 };
-    complexMap[t.name].total += t.price;
-    complexMap[t.name].count++;
-    complexMap[t.name].totalArea += t.area;
+  allTx.forEach(function (tx) {
+    if (!complexMap[tx.name]) complexMap[tx.name] = { total: 0, count: 0, totalArea: 0 };
+    complexMap[tx.name].total += tx.price;
+    complexMap[tx.name].count++;
+    complexMap[tx.name].totalArea += tx.area;
   });
   var complexes = Object.keys(complexMap).map(function (name) {
     var c = complexMap[name];
@@ -446,12 +446,12 @@ function calculateGap() {
   var mP = state.mine.price, tP = state.target.price;
   if (mP == null || tP == null) return;
   var gap = tP - mP;
-  var m = state.mine.tx, t = state.target.tx;
+  var m = state.mine.tx, tTx = state.target.tx;
 
   if (gap > 0) {
     $('gapAmount').textContent = '+' + formatPrice(gap);
     $('gapAmount').className = 'gap-amount positive';
-    $('gapSubtitle').textContent = t('gap_msg_need').replace('{t}', state.target.name).replace('{v}', formatPrice(gap));
+    $('gapSubtitle').textContent = t('gap_msg_need').replace('{t}', tTx.name).replace('{v}', formatPrice(gap));
   } else if (gap < 0) {
     $('gapAmount').textContent = '−' + formatPrice(Math.abs(gap));
     $('gapAmount').className = 'gap-amount negative';
@@ -469,19 +469,19 @@ function calculateGap() {
   $('gapSection').classList.add('show');
 
   var rows = [
-    { l: t('tbl_name'), m: m.name, t: t.name },
-    { l: t('tbl_dong'), m: m.dong, t: t.dong },
-    { l: t('tbl_area'), m: formatArea(m.area), t: formatArea(t.area) },
-    { l: t('tbl_pppy'), m: pricePerPyeong(mP, m.area), t: pricePerPyeong(tP, t.area) },
-    { l: t('tbl_floor'), m: m.floor + t('tx_floor'), t: t.floor + t('tx_floor') },
-    { l: t('tbl_year'), m: m.year + t('tx_year'), t: t.year + t('tx_year') },
-    { l: t('tbl_date'), m: m.dealDate, t: t.dealDate },
-    { l: t('tbl_price'), m: formatPrice(mP), t: formatPrice(tP) },
-    { l: t('tbl_gap'), m: '', t: (gap >= 0 ? '+' : '−') + formatPrice(Math.abs(gap)), h: true },
+    { l: t('tbl_name'), m: m.name, tg: tTx.name },
+    { l: t('tbl_dong'), m: m.dong, tg: tTx.dong },
+    { l: t('tbl_area'), m: formatArea(m.area), tg: formatArea(tTx.area) },
+    { l: t('tbl_pppy'), m: pricePerPyeong(mP, m.area), tg: pricePerPyeong(tP, tTx.area) },
+    { l: t('tbl_floor'), m: m.floor + t('tx_floor'), tg: tTx.floor + t('tx_floor') },
+    { l: t('tbl_year'), m: m.year + t('tx_year'), tg: tTx.year + t('tx_year') },
+    { l: t('tbl_date'), m: m.dealDate, tg: tTx.dealDate },
+    { l: t('tbl_price'), m: formatPrice(mP), tg: formatPrice(tP) },
+    { l: t('tbl_gap'), m: '', tg: (gap >= 0 ? '+' : '−') + formatPrice(Math.abs(gap)), h: true },
   ];
 
   $('breakdownBody').innerHTML = rows.map(function (r) {
-    return '<tr class="' + (r.h ? 'highlight-row' : '') + '"><td>' + r.l + '</td><td>' + r.m + '</td><td>' + r.t + '</td></tr>';
+    return '<tr class="' + (r.h ? 'highlight-row' : '') + '"><td>' + r.l + '</td><td>' + r.m + '</td><td>' + r.tg + '</td></tr>';
   }).join('');
   $('breakdownSection').classList.add('show');
 
@@ -593,12 +593,12 @@ function updateChartTheme() {
   if (!trendChart) return;
   var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   var g = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  var t = isDark ? '#94a3b8' : '#64748b';
+  var tc = isDark ? '#94a3b8' : '#64748b';
   trendChart.options.scales.x.grid.color = g;
   trendChart.options.scales.y.grid.color = g;
-  trendChart.options.scales.x.ticks.color = t;
-  trendChart.options.scales.y.ticks.color = t;
-  trendChart.options.plugins.legend.labels.color = t;
+  trendChart.options.scales.x.ticks.color = tc;
+  trendChart.options.scales.y.ticks.color = tc;
+  trendChart.options.plugins.legend.labels.color = tc;
   trendChart.update();
 }
 
