@@ -115,9 +115,18 @@ function json(res, code, obj) {
 }
 
 // ─── Server ──────────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+    'https://apartment-trade-up-calculator.onrender.com',
+    'http://localhost:3456',
+    'http://localhost:' + PORT,
+];
+
 http.createServer(async (req, res) => {
     const u = url.parse(req.url, true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
     // API: 매매 실거래
@@ -139,9 +148,10 @@ http.createServer(async (req, res) => {
     }
 
     // Static
-    let fp = u.pathname === '/' ? '/index.html' : u.pathname;
-    fp = path.join(__dirname, fp);
-    if (!fp.startsWith(__dirname)) { res.writeHead(403); res.end(); return; }
+    let fp = u.pathname === '/' ? '/index.html' : decodeURIComponent(u.pathname);
+    fp = fp.replace(/\0/g, '');  // null byte 제거
+    fp = path.resolve(__dirname, '.' + fp);
+    if (!fp.startsWith(__dirname + path.sep) && fp !== __dirname) { res.writeHead(403); res.end(); return; }
     const ext = path.extname(fp).toLowerCase();
     fs.readFile(fp, (err, data) => {
         if (err) { res.writeHead(404); res.end('Not Found'); return; }
