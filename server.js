@@ -152,4 +152,14 @@ http.createServer(async (req, res) => {
     console.log('\n  🏠 아파트 갈아타기 계산기 v2\n  ✅ http://localhost:' + PORT);
     console.log('  🔑 API: ' + (API_KEY ? API_KEY.substring(0, 8) + '...' : '⚠️ MISSING'));
     console.log('  🗺️  Kakao: ' + (KAKAO_KEY ? 'loaded' : 'not set (map disabled)') + '\n');
+
+    // Self-ping to prevent Render free tier spin down (every 10 minutes)
+    const RENDER_URL = 'https://apartment-trade-up-calculator.onrender.com';
+    setInterval(() => {
+        https.get(RENDER_URL, (res) => {
+            console.log(`  🏓 Self-ping: ${res.statusCode}`);
+        }).on('error', (err) => {
+            console.error(`  ❌ Self-ping failed: ${err.message}`);
+        });
+    }, 10 * 60 * 1000); // 10분마다
 });
